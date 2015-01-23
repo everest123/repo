@@ -25,8 +25,8 @@ definition(
 
 
 preferences {
-	section("Monitor this lock") {
-        input "lock", "capability.lock", title:"Which lock?"
+	section("Monitor these locks") {
+        input "lock1", "capability.lock", title:"Which locks?", multiple: true
     }
     
     section("Turn on this switch") {
@@ -36,30 +36,29 @@ preferences {
 
 def installed() {
 	log.debug "Installed with settings: ${settings}"
-
+        unsubscribe()
 	initialize()
 }
 
 def updated() {
 	log.debug "Updated with settings: ${settings}"
-
 	unsubscribe()
 	initialize()
 }
 
 def initialize() {
  
- subscribe(lock, "lock.locked", onLocked)
- subscribe(lock, "lock.unlocked", onUnlocked)
+ subscribe(lock, "lock1.locked", onLocked)
+ subscribe(lock, "lock1.unlocked", onUnlocked)
 
 }
 
 def onLocked(evt) {
 	log.debug "Locked"
-    switch1?.off()
+    switch1.off()
 }
 
 def onUnlocked(evt) {
 	log.debug "Unocked"
-    switch1?.on()
+    switch1.on()
 }
