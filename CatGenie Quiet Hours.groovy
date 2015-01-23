@@ -1,5 +1,5 @@
 /**
- *  Catgenie Quiet Hours RevC w/ Pollster - The SmartThings Polling Daemon.
+ *  Pollster - The SmartThings Polling Daemon.
  *
  *  Many SmartThings devices rely on polling to update their status
  *  periodically. Pollster works behind the scenes and calls poll()
@@ -101,7 +101,7 @@ def pollingTask1() {
     log.debug "between: ${between}"
         
         
-    if (state.deviceInStandby && between){
+    if (state.deviceInStandby==1 && between){
     	switches?.off()
         //sendNotificationEvent("ST Turned off the ${switches}")
     } else {
