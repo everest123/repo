@@ -1,5 +1,5 @@
 /**
- *  handler test
+ *  Lock & Switch Control
  *
  *  Copyright 2015 Keith Croshaw
  *
@@ -14,66 +14,53 @@
  *
  */
 definition(
-    name: "Door Unlocked Warning Light Rev A",
+    name: "handler test",
     namespace: "keithcroshaw",
     author: "Keith Croshaw",
-    description: "Door Unlocked Warning Light",
+    description: "handler test",
     category: "My Apps",
-    iconUrl: "https://graph.api.smartthings.com/api/devices/icons/st.Home.home3-icn?displaySize=2x",
-    iconX2Url: "https://graph.api.smartthings.com/api/devices/icons/st.Home.home3-icn?displaySize=2x",
-    iconX3Url: "https://graph.api.smartthings.com/api/devices/icons/st.Home.home3-icn?displaySize=2x")
+    iconUrl: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience.png",
+    iconX2Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png",
+    iconX3Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png")
 
 
 preferences {
-	section("Monitor this lock") {
-        input "lock", "capability.lock", title:"Which lock?"
+	section("Monitor these locks") {
+        input "locks", "capability.lock", title:"Which locks?", multiple: true, required: true
     }
     
     section("Turn on this switch") {
-        input "switch1", "capability.switch", title:"Which switch?"
+        input "switch1", "capability.switch", title:"Which switch?", required: true
     }
 }
 
 def installed() {
 	log.debug "Installed with settings: ${settings}"
-
+    unsubscribe()
 	initialize()
 }
 
 def updated() {
 	log.debug "Updated with settings: ${settings}"
-
 	unsubscribe()
 	initialize()
 }
 
 def initialize() {
  
- subscribe(lock, "lock", LockHandler)
- 
- def lockState = lock.currentValue("lock")
-    log.debug "lockState is ${lockState}"
-    
-    if (lockState == "locked") {
-    	switch1?.off()
-        log.debug "In Locked Logic"
-    } else {
-    	switch1?.on()
-    }
-
+	subscribe(locks, "lock", handler)
 
 }
 
-def LockHandler(evt) {
-	log.debug "Handler Fired"
-    
-    def lockState = lock.currentValue("lock")
-    log.debug "lockState is ${lockState}"
-    
-    if (lockState == "locked") {
-    	switch1?.off()
-        log.debug "In Locked Logic"
-    } else {
-    	switch1?.on()
+
+def handler(evt) {
+
+	log.debug "$evt.displayName is $evt.value"
+
+	if ("$evt.value" == "unlocked") {
+    	switch1.on()
+    }
+    else {
+    	switch1.off()
     }
 }
